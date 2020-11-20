@@ -1,0 +1,8 @@
+# Distribution / packaging
+build/
+orix/
+
+# Temporary
+*~
+/tmp/
+
