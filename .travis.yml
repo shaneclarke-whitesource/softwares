@@ -24,5 +24,6 @@ script:
 after_success:
     - cd $TRAVIS_BUILD_DIR
     - VERSION=`cat VERSION`
+    - echo $VERSION
     - cd orix && tar -zcvf ../softwares.tgz *
     - curl -X POST --data-binary '@softwares.tgz' "https://cdn.oric.org/publish.php?hash=$hash&path=/home/oricoujr/www/ftp/orix/dists/$VERSION/tgz/6502/softwares.tgz"
