@@ -13,9 +13,78 @@ from shutil import copyfile
 
 version_bin="0"
 dest="../orix/usr/share/basic11/"
+
+destftdos="../orix/usr/share/ftdos/"
+destsedoric="../orix/usr/share/sedoric/"
+destroms="../orix/usr/share/roms/"
+destdloppybuilder="../orix/usr/share/fbuilder/"
+destmym="../orix/usr/share/mym/"
+desthrs="../orix/usr/share/hrs/"
+destpt3="../orix/usr/share/pt3/"
+destosid="../orix/usr/share/osid/"
+
+basic_main_db="basic11.db"
+basic_main_db_indexed="basic11i.db"
+
 destetc="../orix/var/cache/basic11/"
+destetcftdos="../orix/var/cache/ftdos/"
+destetcsedoric="../orix/var/cache/sedoric/"
+
 tmpfolderRetrieveSoftware="build/"
 list_file_for_md2hlp=""
+
+def buildDbFileSoftwareSingle(destetc,letter,name_software,filenametap8bytesLength,version_bin,rombasic11,fire2_joy,fire3_joy,down_joy,right_joy,left_joy,fire1_joy,up_joy):
+    f = open(destetc+"/"+letter+"/"+filenametap8bytesLength+".db", "wb")
+    f.write(DecimalToBinary(version_bin))
+    f.write(DecimalToBinary(rombasic11))
+    f.write(KeyboardMatrix(fire2_joy))
+    f.write(KeyboardMatrix(fire3_joy))            
+    f.write(KeyboardMatrix(down_joy))
+    f.write(KeyboardMatrix(right_joy))
+    f.write(KeyboardMatrix(left_joy))
+    f.write(KeyboardMatrix(fire1_joy))
+    f.write(KeyboardMatrix(up_joy))
+
+    f.write(DecimalToBinary(len(name_software)))
+    name_software_bin=bytearray(name_software,'ascii')
+    name_software_bin.append(0x00)
+    f.write(name_software_bin)
+    f.close()
+
+
+def buildMdFile(filenametap8bytesLength,dest,letter,name_software,date_software,download_platform_software,programmer_software,junk_software):
+    md_software="# "+name_software+"\n"
+    #md_software=md_software+"Type : "+download_platform_software+"\n"
+    tdate_software=date_software.split('-')
+    year=tdate_software[0]
+    md_software=md_software+"Release Date : "+year+"\n"
+    md_software=md_software+"Platform : "
+    match = re.search('A', download_platform_software)
+    doslash="no"
+    if match:
+        md_software=md_software+"Atmos"
+        doslash="yes"
+    match = re.search('O', download_platform_software)
+    if match:
+        if doslash=="yes":
+            md_software=md_software+"/"
+        md_software=md_software+"Oric-1"
+        doslash="no"                
+
+    md_software=md_software+"\n"
+            
+    md_software=md_software+"Programmer : "+programmer_software+"\n"
+    #md_software=md_software+"Origin : "+programmer_software+"\n"
+    md_software=md_software+"Informations : "+junk_software+"\n"
+            
+    #print(md_software)
+            
+    md=filenametap8bytesLength+".md"
+    file_md_path=dest+"/"+letter+"/"+md
+    f = open(file_md_path, "wb")
+    md_bin=bytearray(md_software,'ascii')
+    f.write(md_bin)
+    f.close()
 
 
 def removeFrenchChars(mystr):
@@ -40,6 +109,18 @@ def removeFrenchChars(mystr):
 
 def DecimalToBinary(num):
     return int(num).to_bytes(1, byteorder='little')
+
+def CreateTargetFolder(dest,destetc,letter):
+    folder=dest+'/'+letter
+    folderdb=destetc+'/'+letter
+    #print(folder)
+    directory = os.path.dirname(folder)
+    if not os.path.exists(folder):
+        os.mkdir(folder)
+        print("######################## Create "+folder)
+    if not os.path.exists(folderdb):
+        os.mkdir(folderdb)
+        print("######################## Create "+folderdb)
 
 def KeyboardMatrix(num):
     keyboardMatrixTab=[
@@ -84,6 +165,18 @@ if not os.path.exists(dest):
     pathlib.Path(dest).mkdir(parents=True)
 if not os.path.exists(destetc):
     pathlib.Path(destetc).mkdir(parents=True)    
+# ftdos    
+if not os.path.exists(destftdos):
+    pathlib.Path(destftdos).mkdir(parents=True)
+if not os.path.exists(destetcftdos):
+    pathlib.Path(destetcftdos).mkdir(parents=True)    
+
+# sedoric
+if not os.path.exists(destsedoric):
+    pathlib.Path(destsedoric).mkdir(parents=True)
+if not os.path.exists(destetcsedoric):
+    pathlib.Path(destetcsedoric).mkdir(parents=True)        
+
 if not os.path.exists(tmpfolderRetrieveSoftware):
     pathlib.Path(tmpfolderRetrieveSoftware).mkdir(parents=True)    
 
@@ -111,8 +204,7 @@ get_body = b_obj.getvalue()
 
 datastore = json.loads(get_body.decode('utf8'))
 
-basic_main_db="basic11.db"
-basic_main_db_indexed="basic11i.db"
+
 basic_main_db_str=""
 count=0
 #                       low, high
@@ -120,8 +212,9 @@ main_db_table_software=[1,0]
 lenAddSoftware=0
 
 for i in range(len(datastore)):
-    print(i)
+    
     #Use the new datastore datastructure
+    id_software=datastore[i]["id"]
     tapefile=datastore[i]["download_software"]
     name_software=datastore[i]["name_software"]
     programmer_software=datastore[i]["programmer_software"]
@@ -190,99 +283,70 @@ for i in range(len(datastore)):
         f.close()
         #tail=tail.lower()
         letter=tail[0:1].lower()
-        folder=dest+'/'+letter
-        folderdb=destetc+'/'+letter
-        #print(folder)
-        directory = os.path.dirname(folder)
-        if not os.path.exists(folder):
-            os.mkdir(folder)
-            print("######################## Create "+folder)
-        if not os.path.exists(folderdb):
-            os.mkdir(folderdb)
-            print("######################## Create "+folderdb)
+
+
+        CreateTargetFolder(dest,destetc,letter)
+        
+        
+
+        filenametap=tail.lower().replace(" ", "").replace("-", "").replace("_", "")
+            
+        tcnf=filenametap.split('.')
+        print("Generating : "+name_software+"/"+id_software)
+        filenametapext=tcnf[1]
+        cnf=tcnf[0]+".db"
+        filenametapbase=tcnf[0]
+        filenametap8bytesLength=filenametapbase[0:8]
+        
+        print("Filenametap : "+filenametap+" tail : "+tail+" tape file : "+tapefile)
+
+        if extension=="dsk":
+            match = re.search('J', download_platform_software)
+            if match:
+                # Jasmin
+                CreateTargetFolder(destftdos,destetcftdos,letter)
+                print ('# jasmin/ftdos dsk file')
+                copyfile(tmpfolderRetrieveSoftware+tail,destftdos+"/"+letter+"/"+filenametap8bytesLength+".dsk" )
+                if not os.path.exists(destetcftdos+"/"+letter):
+                    os.mkdir(destetcftdos+"/"+letter)
+                buildMdFile(filenametap8bytesLength,destftdos,letter,name_software,date_software,download_platform_software,programmer_software,junk_software)
+                buildDbFileSoftwareSingle(destetcftdos,letter,name_software,filenametap8bytesLength,version_bin,rombasic11,fire2_joy,fire3_joy,down_joy,right_joy,left_joy,fire1_joy,up_joy)
+            match = re.search('C', download_platform_software)
+            if match:
+                # Sedoric
+                print ('# Sedoric dsk file')
+                CreateTargetFolder(destsedoric,destetcsedoric,letter)
+                copyfile(tmpfolderRetrieveSoftware+tail,destsedoric+"/"+letter+"/"+filenametap8bytesLength+".dsk" )
+                if not os.path.exists(destetcsedoric+"/"+letter):
+                    os.mkdir(destetcsedoric+"/"+letter)
+                buildMdFile(filenametap8bytesLength,destsedoric,letter,name_software,date_software,download_platform_software,programmer_software,junk_software)
+                buildDbFileSoftwareSingle(destetcsedoric,letter,name_software,filenametap8bytesLength,version_bin,rombasic11,fire2_joy,fire3_joy,down_joy,right_joy,left_joy,fire1_joy,up_joy)                
 
         if extension=="zip":
-            print("zip")
-            print(tail)
+            print("# zip (Skipping)")
+
             #with zipfile.ZipFile(tmpfolderRetrieveSoftware+tail, 'r') as zip_ref:
             #    zip_ref.extractall(dest+"/"+rombasic11+"/"+letter+"")
         if extension=="tap":
-            #print("tap")
-            filenametap=tail.lower().replace(" ", "").replace("-", "").replace("_", "")
-            
-            tcnf=filenametap.split('.')
-            filenametapext=tcnf[1]
-            cnf=tcnf[0]+".db"
-            filenametapbase=tcnf[0]
-            filenametap8bytesLength=filenametapbase[0:8]
+            print("# tape")
             #print("Copy : "+tmpfolderRetrieveSoftware+tail,dest+"/"+letter+"/"+filenametap8bytesLength+"."+filenametapext)
             copyfile(tmpfolderRetrieveSoftware+tail,dest+"/"+letter+"/"+filenametap8bytesLength+"."+filenametapext )
             if not os.path.exists(destetc+"/"+letter):
                 os.mkdir(destetc+"/"+letter)
-            md_software="# "+name_software+"\n"
-            #md_software=md_software+"Type : "+download_platform_software+"\n"
-            tdate_software=date_software.split('-')
-            year=tdate_software[0]
-            md_software=md_software+"Release Date : "+year+"\n"
-            md_software=md_software+"Platform : "
-            match = re.search('A', download_platform_software)
-            doslash="no"
-            if match:
-                md_software=md_software+"Atmos"
-                doslash="yes"
-            match = re.search('O', download_platform_software)
-            if match:
-                if doslash=="yes":
-                    md_software=md_software+"/"
-                md_software=md_software+"Oric-1"
-                doslash="yes"                
-
-            md_software=md_software+"\n"
-            
-            md_software=md_software+"Programmer : "+programmer_software+"\n"
-            #md_software=md_software+"Origin : "+programmer_software+"\n"
-            md_software=md_software+"Informations : "+junk_software+"\n"
-            
-            #print(md_software)
-            
-            md=filenametap8bytesLength+".md"
-            file_md_path=dest+"/"+letter+"/"+md
-            f = open(file_md_path, "wb")
-            md_bin=bytearray(md_software,'ascii')
-            f.write(md_bin)
-            f.close()
+            buildMdFile(filenametap8bytesLength,dest,letter,name_software,date_software,download_platform_software,programmer_software,junk_software)
+            buildDbFileSoftwareSingle(destetc,letter,name_software,filenametap8bytesLength,version_bin,rombasic11,fire2_joy,fire3_joy,down_joy,right_joy,left_joy,fire1_joy,up_joy)
 
 
-
-            f = open(destetc+"/"+letter+"/"+filenametap8bytesLength+".db", "wb")
-            f.write(DecimalToBinary(version_bin))
-            f.write(DecimalToBinary(rombasic11))
-            f.write(KeyboardMatrix(fire2_joy))
-            f.write(KeyboardMatrix(fire3_joy))            
-            f.write(KeyboardMatrix(down_joy))
-            f.write(KeyboardMatrix(right_joy))
-            f.write(KeyboardMatrix(left_joy))
-            f.write(KeyboardMatrix(fire1_joy))
-            f.write(KeyboardMatrix(up_joy))
-
-            f.write(DecimalToBinary(len(name_software)))
-            name_software_bin=bytearray(name_software,'ascii')
-            name_software_bin.append(0x00)
-            f.write(name_software_bin)
-#            
-            f.close()
             count=count+1
 
             # main db
-            print(name_software)
+           
             addSoftware=filenametap8bytesLength+';'+name_software+'\0'
             basic_main_db_str=basic_main_db_str+addSoftware
             lenAddSoftware+=len(addSoftware)
             
-            #listeconcat.append(3j)
             main_db_table_software.append(lenAddSoftware.to_bytes(2, 'little'))
 
-        #exit
 f = open(destetc+"/"+basic_main_db, "wb")
 f.write(DecimalToBinary(version_bin))
 f.write(bytearray(basic_main_db_str,'ascii'))
