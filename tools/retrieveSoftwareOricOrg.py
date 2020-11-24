@@ -341,7 +341,7 @@ for i in range(len(datastore)):
 
             # main db
            
-            addSoftware=filenametap8bytesLength+';'+name_software+'\0'
+            addSoftware=filenametap8bytesLength.upper()+';'+name_software+'\0'
             basic_main_db_str=basic_main_db_str+addSoftware
             lenAddSoftware+=len(addSoftware)
             
