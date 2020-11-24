@@ -330,28 +330,29 @@ for i in range(len(datastore)):
             #    zip_ref.extractall(dest+"/"+rombasic11+"/"+letter+"")
         if extension=="tap":
             print("# tape")
-            #print("Copy : "+tmpfolderRetrieveSoftware+tail,dest+"/"+letter+"/"+filenametap8bytesLength+"."+filenametapext)
-            copyfile(tmpfolderRetrieveSoftware+tail,dest+"/"+letter+"/"+filenametap8bytesLength+"."+filenametapext )
-            
-            #Hobbit ROM we copy also the tape file at the root of the sdcard
-            if rombasic11=="0":
-                copyfile(tmpfolderRetrieveSoftware+tail,destroot+"/"+filenametap8bytesLength+"."+filenametapext )
+            if rombasic11=="0" or rombasic11=="1" or rombasic11=="2":
+                #print("Copy : "+tmpfolderRetrieveSoftware+tail,dest+"/"+letter+"/"+filenametap8bytesLength+"."+filenametapext)
+                copyfile(tmpfolderRetrieveSoftware+tail,dest+"/"+letter+"/"+filenametap8bytesLength+"."+filenametapext )
                 
-            if not os.path.exists(destetc+"/"+letter):
-                os.mkdir(destetc+"/"+letter)
-            buildMdFile(filenametap8bytesLength,dest,letter,name_software,date_software,download_platform_software,programmer_software,junk_software)
-            buildDbFileSoftwareSingle(destetc,letter,name_software,filenametap8bytesLength,version_bin,rombasic11,fire2_joy,fire3_joy,down_joy,right_joy,left_joy,fire1_joy,up_joy)
+                #Hobbit ROM we copy also the tape file at the root of the sdcard
+                if rombasic11=="0":
+                    copyfile(tmpfolderRetrieveSoftware+tail,destroot+"/"+filenametap8bytesLength+"."+filenametapext )
+                    
+                if not os.path.exists(destetc+"/"+letter):
+                    os.mkdir(destetc+"/"+letter)
+                buildMdFile(filenametap8bytesLength,dest,letter,name_software,date_software,download_platform_software,programmer_software,junk_software)
+                buildDbFileSoftwareSingle(destetc,letter,name_software,filenametap8bytesLength,version_bin,rombasic11,fire2_joy,fire3_joy,down_joy,right_joy,left_joy,fire1_joy,up_joy)
 
 
-            count=count+1
+                count=count+1
 
-            # main db
-           
-            addSoftware=filenametap8bytesLength.upper()+';'+name_software+'\0'
-            basic_main_db_str=basic_main_db_str+addSoftware
-            lenAddSoftware+=len(addSoftware)
+                # main db
             
-            main_db_table_software.append(lenAddSoftware.to_bytes(2, 'little'))
+                addSoftware=filenametap8bytesLength.upper()+';'+name_software+'\0'
+                basic_main_db_str=basic_main_db_str+addSoftware
+                lenAddSoftware+=len(addSoftware)
+                
+                main_db_table_software.append(lenAddSoftware.to_bytes(2, 'little'))
 
 f = open(destetc+"/"+basic_main_db, "wb")
 f.write(DecimalToBinary(version_bin))
