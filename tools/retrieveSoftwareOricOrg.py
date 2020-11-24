@@ -12,6 +12,7 @@ import re
 from shutil import copyfile
 
 version_bin="0"
+destroot="../orix/"
 dest="../orix/usr/share/basic11/"
 
 destftdos="../orix/usr/share/ftdos/"
@@ -331,6 +332,11 @@ for i in range(len(datastore)):
             print("# tape")
             #print("Copy : "+tmpfolderRetrieveSoftware+tail,dest+"/"+letter+"/"+filenametap8bytesLength+"."+filenametapext)
             copyfile(tmpfolderRetrieveSoftware+tail,dest+"/"+letter+"/"+filenametap8bytesLength+"."+filenametapext )
+            
+            #Hobbit ROM we copy also the tape file at the root of the sdcard
+            if rombasic11=="0":
+                copyfile(tmpfolderRetrieveSoftware+tail,destroot+"/"+filenametap8bytesLength+"."+filenametapext )
+                
             if not os.path.exists(destetc+"/"+letter):
                 os.mkdir(destetc+"/"+letter)
             buildMdFile(filenametap8bytesLength,dest,letter,name_software,date_software,download_platform_software,programmer_software,junk_software)
