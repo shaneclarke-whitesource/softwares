@@ -337,7 +337,8 @@ for i in range(len(datastore)):
             #Hobbit ROM we copy also the tape file at the root of the sdcard
             if rombasic11=="0":
                 copyfile(tmpfolderRetrieveSoftware+tail,destroot+"/"+filenametap8bytesLength+"."+filenametapext )
-                
+            if rombasic11!="0" and rombasic11!="1" and rombasic11!="2":    
+                rombasic11=1
             if not os.path.exists(destetc+"/"+letter):
                 os.mkdir(destetc+"/"+letter)
             buildMdFile(filenametap8bytesLength,dest,letter,name_software,date_software,download_platform_software,programmer_software,junk_software)
