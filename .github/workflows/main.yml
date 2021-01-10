@@ -1,0 +1,54 @@
+name: build
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push event but only for the main branch
+  push:
+    branches: [ main ]
+  #pull_request:
+  #  branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Checkout md2hlp
+        uses: actions/checkout@v2
+        with:
+          repository: assinie/md2hlp
+          path: md2hlp
+
+
+      - name: Prepare environment for project
+        run: mv md2hlp ../
+
+      - name: List build directory content
+        run: ls -lR build
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: |
+            build/**/*
+            !build/obj/*
+
+      - name: Upload
+        run: |
+          ls -l
+          cd tools && python retrieveSoftwareOricOrg.py
+          VERSION=`cat VERSION`
+          echo $VERSION
+          cd orix && tar -zcvf ../softwares.tgz * && cd ..
+          ls -l
+          curl -X POST --data-binary '@softwares.tgz' "https://cdn.oric.org/publish.php?hash=$hash&path=/home/oricoujr/www/ftp/orix/dists/$VERSION/tgz/6502/softwares.tgz"
+
+      - name: Post compilation
+        run: mv ../md2hlp .

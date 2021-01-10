@@ -303,6 +303,7 @@ for i in range(len(datastore)):
 
         if extension=="dsk":
             match = re.search('J', download_platform_software)
+            print("download_platform_software"+download_platform_software)
             if match:
                 # Jasmin
                 CreateTargetFolder(destftdos,destetcftdos,letter)
@@ -312,7 +313,7 @@ for i in range(len(datastore)):
                     os.mkdir(destetcftdos+"/"+letter)
                 buildMdFile(filenametap8bytesLength,destftdos,letter,name_software,date_software,download_platform_software,programmer_software,junk_software)
                 buildDbFileSoftwareSingle(destetcftdos,letter,name_software,filenametap8bytesLength,version_bin,rombasic11,fire2_joy,fire3_joy,down_joy,right_joy,left_joy,fire1_joy,up_joy)
-            match = re.search('C', download_platform_software)
+            match = re.search('S', download_platform_software)
             if match:
                 # Sedoric
                 print ('# Sedoric dsk file')
@@ -324,8 +325,8 @@ for i in range(len(datastore)):
                 buildDbFileSoftwareSingle(destetcsedoric,letter,name_software,filenametap8bytesLength,version_bin,rombasic11,fire2_joy,fire3_joy,down_joy,right_joy,left_joy,fire1_joy,up_joy)                
 
         if extension=="zip":
-            print("# zip (Skipping)")
-
+            print("# zip (Skipping) id_software :"+id_software)
+            
             #with zipfile.ZipFile(tmpfolderRetrieveSoftware+tail, 'r') as zip_ref:
             #    zip_ref.extractall(dest+"/"+rombasic11+"/"+letter+"")
         if extension=="tap":
