@@ -78,7 +78,7 @@ def buildMdFile(filenametap8bytesLength,dest,letter,name_software,date_software,
     #md_software=md_software+"Origin : "+programmer_software+"\n"
     md_software=md_software+"Informations : "+junk_software+"\n"
             
-    #print(md_software)
+    print(md_software)
             
     md=filenametap8bytesLength+".md"
     file_md_path=dest+"/"+letter+"/"+md
