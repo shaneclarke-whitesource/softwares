@@ -53,6 +53,27 @@ def buildDbFileSoftwareSingle(destetc,letter,name_software,filenametap8bytesLeng
     f.close()
 
 
+
+def removeFrenchChars(mystr):
+
+    
+    mystr=mystr.replace("é", "e")
+    mystr=mystr.replace("è", "e")
+    mystr=mystr.replace("ê", "e")
+    mystr=mystr.replace("ë", "e")
+    mystr=mystr.replace("ç", "c")
+    mystr=mystr.replace("°", " ")
+
+    mystr=mystr.replace("à", "a")
+    mystr=mystr.replace("â", "a")
+
+    mystr=mystr.replace("ô", "o")
+    mystr=mystr.replace("ï", "i")
+    mystr=mystr.replace("î", "i")
+    mystr=mystr.replace("©", "")
+    return mystr
+
+
 def buildMdFile(filenametap8bytesLength,dest,letter,name_software,date_software,download_platform_software,programmer_software,junk_software):
     md_software="# "+name_software+"\n"
     #md_software=md_software+"Type : "+download_platform_software+"\n"
@@ -74,9 +95,9 @@ def buildMdFile(filenametap8bytesLength,dest,letter,name_software,date_software,
 
     md_software=md_software+"\n"
             
-    md_software=md_software+"Programmer : "+programmer_software+"\n"
+    md_software=md_software+"Programmer : "+removeFrenchChars(programmer_software)+"\n"
     #md_software=md_software+"Origin : "+programmer_software+"\n"
-    md_software=md_software+"Informations : "+junk_software+"\n"
+    md_software=md_software+"Informations : "+removeFrenchChars(junk_software)+"\n"
             
     print(md_software)
             
@@ -86,26 +107,6 @@ def buildMdFile(filenametap8bytesLength,dest,letter,name_software,date_software,
     md_bin=bytearray(md_software,'ascii')
     f.write(md_bin)
     f.close()
-
-
-def removeFrenchChars(mystr):
-
-    
-    mystr=mystr.replace("é", "e")
-    mystr=mystr.replace("è", "e")
-    mystr=mystr.replace("ê", "e")
-    mystr=mystr.replace("ë", "e")
-    mystr=mystr.replace("ç", "c")
-    mystr=mystr.replace("°", " ")
-
-    mystr=mystr.replace("à", "a")
-    mystr=mystr.replace("â", "a")
-
-    mystr=mystr.replace("ô", "o")
-    mystr=mystr.replace("ï", "i")
-    mystr=mystr.replace("î", "i")
-    mystr=mystr.replace("©", "")
-    return mystr
 
 
 def DecimalToBinary(num):
