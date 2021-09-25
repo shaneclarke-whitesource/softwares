@@ -37,6 +37,16 @@ jobs:
           repository: cc65/cc65
           path: cc65
 
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pycurl pytest
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
       - name: Checkout orix-sdk
         if: steps.cache-sdk.outputs.cache-hit != 'true'
         uses: actions/checkout@v2
