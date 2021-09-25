@@ -43,8 +43,8 @@ jobs:
           python-version: 3.7
       - name: Install dependencies
         run: |
-          python -m pip3 install --upgrade pip
-          pip3 install pycurl pytest
+          python -m pip install --upgrade pip
+          pip3 install pycurl
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Checkout orix-sdk
