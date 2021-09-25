@@ -43,7 +43,7 @@ jobs:
           python-version: 3.7
       - name: Install dependencies
         run: |
-          apt-get install libcurl-devel -y
+          sudo apt-get install libcurl-devel -y
           python -m pip install --upgrade pip
           pip3 install pycurl==7.43.0.1 --global-option="--with-nss" --upgrade
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
