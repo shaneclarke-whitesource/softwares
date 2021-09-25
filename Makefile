@@ -21,5 +21,5 @@ all : build
 .PHONY : all
 
 
-init:
+build:
 	cd tools && python retrieveSoftwareOricOrg.py
