@@ -117,9 +117,10 @@ jobs:
         run:  |
           sudo apt-get install curl -y
           sudo apt-get install libcurl4-gnutls-dev -y
-          python -m pip install --upgrade pip
-          pip3 install pycurl==7.43.0.1 --global-option="--with-nss" --upgrade
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          sudo apt-get install python-pycurl -y
+          #python -m pip install --upgrade pip
+          #pip3 install pycurl==7.43.0.1 --global-option="--with-nss" --upgrade
+          #if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           CC65_HOME=${GITHUB_WORKSPACE}/../cc65 make
 
       - name: List build directory content
