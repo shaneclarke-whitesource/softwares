@@ -12,24 +12,30 @@ import re
 from shutil import copyfile
 
 version_bin="0"
-destroot="../orix/"
-dest="../orix/usr/share/basic11/"
+destroot="../build/"
+dest="../build/usr/share/basic11/"
 
-destftdos="../orix/usr/share/ftdos/"
-destsedoric="../orix/usr/share/sedoric/"
-destroms="../orix/usr/share/roms/"
-destdloppybuilder="../orix/usr/share/fbuilder/"
-destmym="../orix/usr/share/mym/"
-desthrs="../orix/usr/share/hrs/"
-destpt3="../orix/usr/share/pt3/"
-destosid="../orix/usr/share/osid/"
+destftdos="../build/usr/share/ftdos/"
+destsedoric="../build/usr/share/sedoric/"
+destroms="../build/usr/share/roms/"
+destdloppybuilder="../build/usr/share/fbuilder/"
+destmym="../build/usr/share/mym/"
+desthrs="../build/usr/share/hrs/"
+destpt3="../build/usr/share/pt3/"
+destosid="../build/usr/share/osid/"
 
 basic_main_db="basic11.db"
 basic_main_db_indexed="basic11i.db"
 
-destetc="../orix/var/cache/basic11/"
-destetcftdos="../orix/var/cache/ftdos/"
-destetcsedoric="../orix/var/cache/sedoric/"
+basic_games_db="games.db"
+basic_demos_db="demos.db"
+basic_utils_db="utils.db"
+basic_unsorted_db="unsorted.db"
+
+destetc="../build/var/cache/basic11/"
+destlauncher="../build/var/cache/launcher/"
+destetcftdos="../build/var/cache/ftdos/"
+destetcsedoric="../build/var/cache/sedoric/"
 
 tmpfolderRetrieveSoftware="build/"
 list_file_for_md2hlp=""
@@ -104,6 +110,11 @@ def buildMdFile(filenametap8bytesLength,dest,letter,name_software,date_software,
     md=filenametap8bytesLength+".md"
     file_md_path=dest+"/"+letter+"/"+md
     f = open(file_md_path, "wb")
+    md_software = re.sub(u"\u2013", "-", md_software)
+    md_software = re.sub(u"\u2019", "'", md_software)
+    
+    #md_software = md_software.decode('utf-8')
+    #md_software = md_software.replace("\u2013", "-") #en dash
     md_bin=bytearray(md_software,'ascii')
     f.write(md_bin)
     f.close()
@@ -167,6 +178,13 @@ if not os.path.exists(dest):
     pathlib.Path(dest).mkdir(parents=True)
 if not os.path.exists(destetc):
     pathlib.Path(destetc).mkdir(parents=True)    
+
+# Launcher
+if not os.path.exists(destlauncher):
+    pathlib.Path(destlauncher).mkdir(parents=True)        
+
+
+
 # ftdos    
 if not os.path.exists(destftdos):
     pathlib.Path(destftdos).mkdir(parents=True)
@@ -208,6 +226,11 @@ datastore = json.loads(get_body.decode('utf8'))
 
 
 basic_main_db_str=""
+game_db_str=""
+demos_db_str=""
+utils_db_str=""
+unsorted_db_str=""
+
 count=0
 #                       low, high
 main_db_table_software=[1,0]
@@ -221,6 +244,7 @@ for i in range(len(datastore)):
     name_software=datastore[i]["name_software"]
     programmer_software=datastore[i]["programmer_software"]
     download_platform_software=datastore[i]["platform_software"]
+    category_software=datastore[i]["category_software"]
     junk_software=datastore[i]["junk_software"]
     date_software=datastore[i]["date_software"]
     name_software=name_software.replace("é", "e")
@@ -354,30 +378,62 @@ for i in range(len(datastore)):
             addSoftware=filenametap8bytesLength.upper()+';'+name_software+'\0'
             basic_main_db_str=basic_main_db_str+addSoftware
             lenAddSoftware+=len(addSoftware)
-            
             main_db_table_software.append(lenAddSoftware.to_bytes(2, 'little'))
+            addSoftwareLauncher=filenametap8bytesLength.upper()+';'+name_software+';'+download_platform_software+'\0'
+            if category_software=="1":
+                game_db_str=game_db_str+addSoftwareLauncher
+            if category_software=="6":
+                demos_db_str=demos_db_str+addSoftwareLauncher          
+            if category_software=="2":
+                utils_db_str=utils_db_str+addSoftwareLauncher                        
+            if category_software=="7":
+                unsorted_db_str=unsorted_db_str+addSoftwareLauncher
 
+EOF=0xFF            
+print("Write basic11 db")
 f = open(destetc+"/"+basic_main_db, "wb")
 f.write(DecimalToBinary(version_bin))
 f.write(bytearray(basic_main_db_str,'ascii'))
-EOF=0xFF
 f.write(DecimalToBinary(EOF))
 f.close()
-EOF=0xFF
-print(main_db_table_software)
+
+#print(main_db_table_software)
 # indexed
 f = open(destetc+"/"+basic_main_db_indexed, "wb")
 f.write(DecimalToBinary(version_bin))
 f.write(bytearray(basic_main_db_str,'ascii'))
-
-#f.write(DecimalToBinary(EOF))
-##for item in main_db_table_software:
-    #f.write(item)
-
 f.write(DecimalToBinary(EOF))
+f.close()
 
-#print("Number of software : "+count)
+print("Write basic_games_db")
+f = open(destlauncher+"/"+basic_games_db, "wb")
+f.write(DecimalToBinary(version_bin))
+f.write(bytearray(game_db_str,'ascii'))
+f.write(DecimalToBinary(EOF))
+f.close()
 
-#endof file : $FF
+print("Write basic_demos_db")
+f = open(destlauncher+"/"+basic_demos_db, "wb")
+f.write(DecimalToBinary(version_bin))
+f.write(bytearray(demos_db_str,'ascii'))
+f.write(DecimalToBinary(EOF))
+f.close()
 
+print("Write basic_utils_db")
+f = open(destlauncher+"/"+basic_utils_db, "wb")
+f.write(DecimalToBinary(version_bin))
+f.write(bytearray(utils_db_str,'ascii'))
+f.write(DecimalToBinary(EOF))
+f.close()
+
+print("Write basic_unsorted_db")
+f = open(destlauncher+"/"+basic_unsorted_db, "wb")
+f.write(DecimalToBinary(version_bin))
+f.write(bytearray(unsorted_db_str,'ascii'))
+f.write(DecimalToBinary(EOF))
+f.close()
+
+
+#basic_utils_db="utils.db"
+#basic_unsorted_db="unsorted.db"
 
