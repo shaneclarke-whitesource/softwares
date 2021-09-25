@@ -37,18 +37,6 @@ jobs:
           repository: cc65/cc65
           path: cc65
 
-      - name: Set up Python 3.7
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.7
-      - name: Install dependencies
-        run: |
-          sudo apt-get install curl -y
-          sudo apt-get install libcurl4-gnutls-dev -y
-          python -m pip install --upgrade pip
-          pip3 install pycurl==7.43.0.1 --global-option="--with-nss" --upgrade
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
       - name: Checkout orix-sdk
         if: steps.cache-sdk.outputs.cache-hit != 'true'
         uses: actions/checkout@v2
