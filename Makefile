@@ -22,4 +22,4 @@ all : build
 
 
 build:
-	cd tools && python retrieveSoftwareOricOrg.py
+	cd tools && python3 retrieveSoftwareOricOrg.py
