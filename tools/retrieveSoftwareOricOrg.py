@@ -62,7 +62,7 @@ def buildDbFileSoftwareSingle(destetc,letter,name_software,filenametap8bytesLeng
 
 def removeFrenchChars(mystr):
 
-    
+    mystr=mystr.replace("Ã©", "e")
     mystr=mystr.replace("é", "e")
     mystr=mystr.replace("è", "e")
     mystr=mystr.replace("ê", "e")
@@ -79,11 +79,12 @@ def removeFrenchChars(mystr):
     mystr=mystr.replace("©", "")
     mystr=mystr.replace("Ã", "e")
     
+    
     return mystr
 
 
 def buildMdFile(filenametap8bytesLength,dest,letter,name_software,date_software,download_platform_software,programmer_software,junk_software):
-    md_software="# "+name_software+"\n"
+    md_software="# "+removeFrenchChars(name_software)+"\n"
     #md_software=md_software+"Type : "+download_platform_software+"\n"
     tdate_software=date_software.split('-')
     year=tdate_software[0]
