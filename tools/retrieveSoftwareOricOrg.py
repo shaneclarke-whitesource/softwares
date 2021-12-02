@@ -53,7 +53,7 @@ def buildDbFileSoftwareSingle(destetc,letter,name_software,filenametap8bytesLeng
     f.write(KeyboardMatrix(up_joy))
 
     f.write(DecimalToBinary(len(name_software)))
-    name_software_bin=bytearray(name_software,'ascii')
+    name_software_bin=bytearray(removeFrenchChars(name_software),'ascii')
     name_software_bin.append(0x00)
     f.write(name_software_bin)
     f.close()
