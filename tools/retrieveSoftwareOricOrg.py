@@ -391,9 +391,11 @@ for i in range(len(datastore)):
             if category_software=="2":
                 utils_db_str=utils_db_str+addSoftwareLauncher
                 # For debug
-                print("Debug : "+addSoftwareLauncher)
+                
             if category_software=="7":
                 unsorted_db_str=unsorted_db_str+addSoftwareLauncher
+
+print("Debug : "+utils_db_str)
 
 EOF=0xFF            
 print("Write basic11 db")
