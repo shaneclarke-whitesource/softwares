@@ -389,7 +389,9 @@ for i in range(len(datastore)):
             if category_software=="6":
                 demos_db_str=demos_db_str+addSoftwareLauncher          
             if category_software=="2":
-                utils_db_str=utils_db_str+addSoftwareLauncher                        
+                utils_db_str=utils_db_str+addSoftwareLauncher
+                # For debug
+                print("Debug : "+addSoftwareLauncher)
             if category_software=="7":
                 unsorted_db_str=unsorted_db_str+addSoftwareLauncher
 
