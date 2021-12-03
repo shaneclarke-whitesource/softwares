@@ -379,7 +379,7 @@ for i in range(len(datastore)):
 
             # main db
            
-            addSoftware=filenametap8bytesLength.upper()+';'+name_software+'\0'
+            addSoftware=filenametap8bytesLength.upper()+';'+removeFrenchChars(name_software)+'\0'
             basic_main_db_str=basic_main_db_str+addSoftware
             lenAddSoftware+=len(addSoftware)
             main_db_table_software.append(lenAddSoftware.to_bytes(2, 'little'))
