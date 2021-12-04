@@ -78,10 +78,22 @@ def removeFrenchChars(mystr):
     mystr=mystr.replace("î", "i")
     mystr=mystr.replace("©", "")
     mystr=mystr.replace("Ã", "e")
+    
     mystr=mystr.replace(u'\xa0', u'a')
     
     
     return mystr
+
+def fileToExecuteTruncateTo8Letters(filename):
+    extension=tapefile[-3:].lower()
+    head, tail = os.path.split(filename)
+    filenametap=tail.lower().replace(" ", "").replace("-", "").replace("_", "")
+    tcnf=filenametap.split('.')
+    filenametapext=tcnf[1]
+    filenametapbase=tcnf[0]
+    filenametap8bytesLength=filenametapbase[0:8]+"."+filenametapext
+     
+    return filenametap8bytesLength.upper()
 
 
 def buildMdFile(filenametap8bytesLength,dest,letter,name_software,date_software,download_platform_software,programmer_software,junk_software):
@@ -245,9 +257,17 @@ for i in range(len(datastore)):
     #Use the new datastore datastructure
     id_software=datastore[i]["id"]
     tapefile=datastore[i]["download_software"]
+
     name_software=datastore[i]["name_software"]
     programmer_software=datastore[i]["programmer_software"]
     download_platform_software=datastore[i]["platform_software"]
+    download_2_platform=datastore[i]["second_download_platform_software"]
+    download_3_platform=datastore[i]["download_3_platform"]
+    
+    download_1_file=datastore[i]["download_software"]
+    download_2_file=datastore[i]["second_download_software"]
+    download_3_file=datastore[i]["download_3_path"]
+    
     category_software=datastore[i]["category_software"]
     junk_software=datastore[i]["junk_software"]
     date_software=datastore[i]["date_software"]
@@ -383,7 +403,53 @@ for i in range(len(datastore)):
             basic_main_db_str=basic_main_db_str+addSoftware
             lenAddSoftware+=len(addSoftware)
             main_db_table_software.append(lenAddSoftware.to_bytes(2, 'little'))
-            addSoftwareLauncher=filenametap8bytesLength.upper()+';'+name_software+';'+download_platform_software+'\0'
+            
+            # rules for software in the launcher ?
+            # Does the first download is an atmos mode ? 
+            # Yes we place it
+            flag=""
+            if (download_platform_software.find('AK') != -1):
+                flag=download_platform_software
+                file_to_start=download_1_file
+            if (flag==""):
+                #looking for second download
+                if (download_2_platform.find('AK') != -1):
+                    flag=download_2_platform
+                    file_to_start=download_2_file
+            if (flag==""):
+                #looking for second download
+                if (download_3_platform.find('AK') != -1):
+                    flag=download_3_platform
+                    file_to_start=download_3_file
+            # At this step the 3 downloads does not contains atmos + Tape mode
+            # Trying to set oric-1 rom in that case
+            if (flag==""):
+                #looking for second download
+                if (download_platform_software.find('OK') != -1):
+                    flag=download_2_platform
+                    file_to_start=download_2_file
+            if (flag==""):
+                #looking for second download
+                if (download_2_platform.find('OK') != -1):
+                    flag=download_2_platform
+                    file_to_start=download_2_file
+            if (flag==""):
+                #looking for second download
+                if (download_3_platform.find('OK') != -1):
+                    flag=download_3_platform
+                    file_to_start=download_3_file            
+            if (flag!=""):
+                addSoftwareLauncher=fileToExecuteTruncateTo8Letters(file_to_start)+';'+removeFrenchChars(name_software)+';'+flag+';\0'
+
+    #download_platform_software=datastore[i]["platform_software"]
+    #download_2_platform=datastore[i]["second_download_platform_software"]
+    #download_3_platform=datastore[i]["download_3_platform"]
+    
+    #download_1_file=datastore[i]["download_software"]
+    #download_2_file=datastore[i]["second_download_software"]
+    #download_3_file=datastore[i]["download_3_path"]
+    
+
             if category_software=="1":
                 game_db_str=game_db_str+addSoftwareLauncher
             if category_software=="6":
