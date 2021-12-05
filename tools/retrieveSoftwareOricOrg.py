@@ -407,36 +407,40 @@ for i in range(len(datastore)):
             # rules for software in the launcher ?
             # Does the first download is an atmos mode ? 
             # Yes we place it
+
+            # Definition of FLAGS
+            # A : Atmos and tape file
+            # O : Oric-1 and tape file
             flag=""
             if (download_platform_software.find('AK') != -1):
-                flag=download_platform_software
+                flag='A'
                 file_to_start=download_1_file
             if (flag==""):
                 #looking for second download
                 if (download_2_platform.find('AK') != -1):
-                    flag=download_2_platform
+                    flag='A'
                     file_to_start=download_2_file
             if (flag==""):
                 #looking for second download
                 if (download_3_platform.find('AK') != -1):
-                    flag=download_3_platform
+                    flag='A'
                     file_to_start=download_3_file
             # At this step the 3 downloads does not contains atmos + Tape mode
             # Trying to set oric-1 rom in that case
             if (flag==""):
                 #looking for second download
                 if (download_platform_software.find('OK') != -1):
-                    flag=download_2_platform
+                    flag='O'
                     file_to_start=download_2_file
             if (flag==""):
                 #looking for second download
                 if (download_2_platform.find('OK') != -1):
-                    flag=download_2_platform
+                    flag='O'
                     file_to_start=download_2_file
             if (flag==""):
                 #looking for second download
                 if (download_3_platform.find('OK') != -1):
-                    flag=download_3_platform
+                    flag='O'
                     file_to_start=download_3_file            
             if (flag!=""):
                 addSoftwareLauncher=fileToExecuteTruncateTo8Letters(file_to_start)+';'+removeFrenchChars(name_software)+';'+flag+';\0'
