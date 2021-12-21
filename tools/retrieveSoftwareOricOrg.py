@@ -31,14 +31,20 @@ basic_games_db="games.db"
 basic_demos_db="demos.db"
 basic_utils_db="utils.db"
 basic_unsorted_db="unsorted.db"
+basic_music_db="music.db"
 
 destetc="../build/var/cache/basic11/"
-destlauncher="../build/var/cache/launcher/"
+destlauncher="../build/var/cache/loader/"
 destetcftdos="../build/var/cache/ftdos/"
 destetcsedoric="../build/var/cache/sedoric/"
 
 tmpfolderRetrieveSoftware="build/"
 list_file_for_md2hlp=""
+nb_of_games=0
+nb_of_unsorted=0
+nb_of_music=0
+nb_of_demo=0
+nb_of_tools=0
 
 def buildDbFileSoftwareSingle(destetc,letter,name_software,filenametap8bytesLength,version_bin,rombasic11,fire2_joy,fire3_joy,down_joy,right_joy,left_joy,fire1_joy,up_joy):
     f = open(destetc+"/"+letter+"/"+filenametap8bytesLength+".db", "wb")
@@ -69,6 +75,8 @@ def removeFrenchChars(mystr):
     mystr=mystr.replace("ë", "e")
     mystr=mystr.replace("ç", "c")
     mystr=mystr.replace("°", " ")
+    mystr=mystr.replace("Â", " ")
+    mystr=mystr.replace("e¨", "e")
 
     mystr=mystr.replace("à", "a")
     mystr=mystr.replace("â", "a")
@@ -88,11 +96,12 @@ def fileToExecuteTruncateTo8Letters(filename):
     extension=tapefile[-3:].lower()
     head, tail = os.path.split(filename)
     filenametap=tail.lower().replace(" ", "").replace("-", "").replace("_", "")
+    print("Filenametap : "+filenametap)
     tcnf=filenametap.split('.')
     filenametapext=tcnf[1]
     filenametapbase=tcnf[0]
     filenametap8bytesLength=filenametapbase[0:8]+"."+filenametapext
-     
+    
     return filenametap8bytesLength.upper()
 
 
@@ -138,6 +147,9 @@ def buildMdFile(filenametap8bytesLength,dest,letter,name_software,date_software,
 
 def DecimalToBinary(num):
     return int(num).to_bytes(1, byteorder='little')
+
+def DecimalTo16bits(num):
+    return int(num).to_bytes(2, byteorder='little')
 
 def CreateTargetFolder(dest,destetc,letter):
     folder=dest+'/'+letter
@@ -243,6 +255,7 @@ datastore = json.loads(get_body.decode('utf8'))
 
 basic_main_db_str=""
 game_db_str=""
+music_db_str=""
 demos_db_str=""
 utils_db_str=""
 unsorted_db_str=""
@@ -342,6 +355,7 @@ for i in range(len(datastore)):
         filenametap=tail.lower().replace(" ", "").replace("-", "").replace("_", "")
             
         tcnf=filenametap.split('.')
+        print("###########################################################################################")
         print("Generating : "+name_software+"/"+id_software)
         filenametapext=tcnf[1]
         cnf=tcnf[0]+".db"
@@ -398,7 +412,7 @@ for i in range(len(datastore)):
             count=count+1
 
             # main db
-           
+            print("Parsing : "+removeFrenchChars(name_software))
             addSoftware=filenametap8bytesLength.upper()+';'+removeFrenchChars(name_software)+'\0'
             basic_main_db_str=basic_main_db_str+addSoftware
             lenAddSoftware+=len(addSoftware)
@@ -411,27 +425,31 @@ for i in range(len(datastore)):
             # Definition of FLAGS
             # A : Atmos and tape file
             # O : Oric-1 and tape file
+            addSoftwareLauncher=""
             flag=""
             if (download_platform_software.find('AK') != -1):
                 flag='A'
                 file_to_start=download_1_file
+                print("Flag A found : first download")
             if (flag==""):
                 #looking for second download
                 if (download_2_platform.find('AK') != -1):
                     flag='A'
                     file_to_start=download_2_file
+                    print("Flag A found : second download")
             if (flag==""):
                 #looking for second download
                 if (download_3_platform.find('AK') != -1):
                     flag='A'
                     file_to_start=download_3_file
+                    print("Flag A found : third download")
             # At this step the 3 downloads does not contains atmos + Tape mode
             # Trying to set oric-1 rom in that case
             if (flag==""):
                 #looking for second download
                 if (download_platform_software.find('OK') != -1):
                     flag='O'
-                    file_to_start=download_2_file
+                    file_to_start=download_1_file
             if (flag==""):
                 #looking for second download
                 if (download_2_platform.find('OK') != -1):
@@ -444,6 +462,8 @@ for i in range(len(datastore)):
                     file_to_start=download_3_file            
             if (flag!=""):
                 addSoftwareLauncher=fileToExecuteTruncateTo8Letters(file_to_start)+';'+removeFrenchChars(name_software)+';'+flag+';\0'
+            else:
+                print("Skipping into launcher db : "+removeFrenchChars(name_software))
 
     #download_platform_software=datastore[i]["platform_software"]
     #download_2_platform=datastore[i]["second_download_platform_software"]
@@ -452,18 +472,28 @@ for i in range(len(datastore)):
     #download_1_file=datastore[i]["download_software"]
     #download_2_file=datastore[i]["second_download_software"]
     #download_3_file=datastore[i]["download_3_path"]
-    
 
-            if category_software=="1":
+
+            #nb_of_music=0
+
+
+
+            if category_software=="1" and addSoftwareLauncher!="":
                 game_db_str=game_db_str+addSoftwareLauncher
-            if category_software=="6":
+                nb_of_games=nb_of_games+1
+            if category_software=="6" and addSoftwareLauncher!="":
                 demos_db_str=demos_db_str+addSoftwareLauncher          
-            if category_software=="2":
+                nb_of_demo=nb_of_demo+1
+                print("#################> Demo adding : "+addSoftwareLauncher)
+            if category_software=="2" and addSoftwareLauncher!="":
                 utils_db_str=utils_db_str+addSoftwareLauncher
-                # For debug
-                
-            if category_software=="7":
+                nb_of_tools=nb_of_tools+1
+            if category_software=="7" and addSoftwareLauncher!="":
                 unsorted_db_str=unsorted_db_str+addSoftwareLauncher
+                nb_of_unsorted=nb_of_unsorted+1
+            if category_software=="10" and addSoftwareLauncher!="":
+                music_db_str=music_db_str+addSoftwareLauncher
+                nb_of_music=nb_of_music+1
 
 print("Debug : "+utils_db_str)
 
@@ -486,6 +516,7 @@ f.close()
 print("Write basic_games_db")
 f = open(destlauncher+"/"+basic_games_db, "wb")
 f.write(DecimalToBinary(version_bin))
+f.write(DecimalTo16bits(nb_of_games))
 f.write(bytearray(game_db_str,'ascii'))
 f.write(DecimalToBinary(EOF))
 f.close()
@@ -493,6 +524,7 @@ f.close()
 print("Write basic_demos_db")
 f = open(destlauncher+"/"+basic_demos_db, "wb")
 f.write(DecimalToBinary(version_bin))
+f.write(DecimalTo16bits(nb_of_demo))
 f.write(bytearray(demos_db_str,'ascii'))
 f.write(DecimalToBinary(EOF))
 f.close()
@@ -500,6 +532,7 @@ f.close()
 print("Write basic_utils_db")
 f = open(destlauncher+"/"+basic_utils_db, "wb")
 f.write(DecimalToBinary(version_bin))
+f.write(DecimalTo16bits(nb_of_tools))
 f.write(bytearray(utils_db_str,'ascii'))
 f.write(DecimalToBinary(EOF))
 f.close()
@@ -507,7 +540,16 @@ f.close()
 print("Write basic_unsorted_db")
 f = open(destlauncher+"/"+basic_unsorted_db, "wb")
 f.write(DecimalToBinary(version_bin))
+f.write(DecimalTo16bits(nb_of_unsorted))
 f.write(bytearray(unsorted_db_str,'ascii'))
+f.write(DecimalToBinary(EOF))
+f.close()
+
+print("Write basic_music_db")
+f = open(destlauncher+"/"+basic_music_db, "wb")
+f.write(DecimalToBinary(version_bin))
+f.write(DecimalTo16bits(nb_of_music))
+f.write(bytearray(music_db_str,'ascii'))
 f.write(DecimalToBinary(EOF))
 f.close()
 
