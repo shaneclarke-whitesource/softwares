@@ -86,6 +86,8 @@ def removeFrenchChars(mystr):
     mystr=mystr.replace("î", "i")
     mystr=mystr.replace("©", "")
     mystr=mystr.replace("Ã", "e")
+    mystr=mystr.replace(u'\xaa', "u")
+    
     
     mystr=mystr.replace(u'\xa0', u'a')
     
