@@ -87,8 +87,7 @@ def removeFrenchChars(mystr):
     mystr=mystr.replace("©", "")
     mystr=mystr.replace("Ã", "e")
     mystr=mystr.replace(u'\xaa', "u")
-    
-    
+    mystr=mystr.replace(u'\xa7', "c")
     mystr=mystr.replace(u'\xa0', u'a')
     
     
@@ -429,7 +428,7 @@ for i in range(len(datastore)):
             # O : Oric-1 and tape file
             addSoftwareLauncher=""
             flag=""
-            if (download_platform_software.find('AK') != -1):
+            if (download_platform_software.find('A') and download_platform_software.find('K') != -1):
                 flag='A'
                 file_to_start=download_1_file
                 print("Flag A found : first download")
@@ -465,7 +464,7 @@ for i in range(len(datastore)):
             if (flag!=""):
                 addSoftwareLauncher=fileToExecuteTruncateTo8Letters(file_to_start)+';'+removeFrenchChars(name_software)+';'+flag+';\0'
             else:
-                print("Skipping into launcher db : "+removeFrenchChars(name_software))
+                print("Skipping into loader db : "+removeFrenchChars(name_software))
 
     #download_platform_software=datastore[i]["platform_software"]
     #download_2_platform=datastore[i]["second_download_platform_software"]
