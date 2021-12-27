@@ -89,6 +89,8 @@ def removeFrenchChars(mystr):
     mystr=mystr.replace(u'\xaa', "u")
     mystr=mystr.replace(u'\xa7', "c")
     mystr=mystr.replace(u'\xa0', u'a')
+    mystr=mystr.replace(u'\xa8', u'e')
+    
     
     
     return mystr
@@ -428,7 +430,7 @@ for i in range(len(datastore)):
             # O : Oric-1 and tape file
             addSoftwareLauncher=""
             flag=""
-            if (download_platform_software.find('A') and download_platform_software.find('K') != -1):
+            if (download_platform_software.find('A') != -1 and download_platform_software.find('K') != -1):
                 flag='A'
                 file_to_start=download_1_file
                 print("Flag A found : first download")
@@ -466,33 +468,44 @@ for i in range(len(datastore)):
             else:
                 print("Skipping into loader db : "+removeFrenchChars(name_software))
 
-    #download_platform_software=datastore[i]["platform_software"]
-    #download_2_platform=datastore[i]["second_download_platform_software"]
-    #download_3_platform=datastore[i]["download_3_platform"]
-    
-    #download_1_file=datastore[i]["download_software"]
-    #download_2_file=datastore[i]["second_download_software"]
-    #download_3_file=datastore[i]["download_3_path"]
-
-
-            #nb_of_music=0
-
 
 
             if category_software=="1" and addSoftwareLauncher!="":
                 game_db_str=game_db_str+addSoftwareLauncher
                 nb_of_games=nb_of_games+1
+            if category_software=="2" and addSoftwareLauncher!="":
+                utils_db_str=utils_db_str+addSoftwareLauncher
+                nb_of_tools=nb_of_tools+1                
+            #Tape ins game
+            if category_software=="3" and addSoftwareLauncher!="":
+                game_db_str=game_db_str+addSoftwareLauncher
+                nb_of_games=nb_of_games+1                
+            # Tape ins utility
+            if category_software=="4" and addSoftwareLauncher!="":
+                utils_db_str=utils_db_str+addSoftwareLauncher
+                nb_of_tools=nb_of_tools+1
+            # Tape ins unknow category set to utils
+            if category_software=="5" and addSoftwareLauncher!="":
+                utils_db_str=utils_db_str+addSoftwareLauncher
+                nb_of_tools=nb_of_tools+1                
             if category_software=="6" and addSoftwareLauncher!="":
                 demos_db_str=demos_db_str+addSoftwareLauncher          
                 nb_of_demo=nb_of_demo+1
                 print("#################> Demo adding : "+addSoftwareLauncher)
-            if category_software=="2" and addSoftwareLauncher!="":
-                utils_db_str=utils_db_str+addSoftwareLauncher
-                nb_of_tools=nb_of_tools+1
+
             if category_software=="7" and addSoftwareLauncher!="":
                 unsorted_db_str=unsorted_db_str+addSoftwareLauncher
                 nb_of_unsorted=nb_of_unsorted+1
+            # Game from book
+            if category_software=="8" and addSoftwareLauncher!="":
+                game_db_str=game_db_str+addSoftwareLauncher
+                nb_of_games=nb_of_games+1
+            # Tape ins book utility
+            if category_software=="9" and addSoftwareLauncher!="":
+                utils_db_str=utils_db_str+addSoftwareLauncher
+                nb_of_tools=nb_of_tools+1                
             if category_software=="10" and addSoftwareLauncher!="":
+                print("########### Add music")
                 music_db_str=music_db_str+addSoftwareLauncher
                 nb_of_music=nb_of_music+1
 
