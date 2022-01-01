@@ -168,15 +168,15 @@ def BuildDsk(platform_software,letter,destpath,destetc,name_software,filenametap
 def BuildTape(tmpfolderRetrieveSoftware,tail,dest,letter,filenametap8bytesLength,filenametapext,destroot,destetc,name_software,date_software,download_platform_software,programmer_software,junk_software,version_bin,rombasic11,fire2_joy,fire3_joy,down_joy,right_joy,left_joy,fire1_joy,up_joy):
     #Hobbit ROM we copy also the tape file at the root of the sdcard
     print("Copy : "+tmpfolderRetrieveSoftware+tail+" to : "+dest+"/"+letter+"/"+filenametap8bytesLength+"."+filenametapext)
+    print("Rom basic id : "+str(rombasic11))
     copyfile(tmpfolderRetrieveSoftware+tail,dest+"/"+letter+"/"+filenametap8bytesLength+"."+filenametapext)
     if rombasic11=="0":
         copyfile(tmpfolderRetrieveSoftware+tail,destroot+"/"+filenametap8bytesLength+"."+filenametapext )
-    if rombasic11!="0" and rombasic11!="1" and rombasic11!="2":    
-        rombasic11=1
-        if not os.path.exists(destetc+"/"+letter):
-            os.mkdir(destetc+"/"+letter)
-        buildMdFile(filenametap8bytesLength,dest,letter,name_software,date_software,download_platform_software,programmer_software,junk_software)
-        buildDbFileSoftwareSingle(destetc,letter,name_software,filenametap8bytesLength,version_bin,rombasic11,fire2_joy,fire3_joy,down_joy,right_joy,left_joy,fire1_joy,up_joy)
+       
+    if not os.path.exists(destetc+"/"+letter):
+        os.mkdir(destetc+"/"+letter)
+    buildMdFile(filenametap8bytesLength,dest,letter,name_software,date_software,download_platform_software,programmer_software,junk_software)
+    buildDbFileSoftwareSingle(destetc,letter,name_software,filenametap8bytesLength,version_bin,rombasic11,fire2_joy,fire3_joy,down_joy,right_joy,left_joy,fire1_joy,up_joy)
 
 def CheckTape(filename,tmpfolderRetrieveSoftware,tail,dest,letter,filenametap8bytesLength,filenametapext,destroot,destetc,name_software,date_software,download_platform_software,programmer_software,junk_software,version_bin,rombasic11,fire2_joy,fire3_joy,down_joy,right_joy,left_joy,fire1_joy,up_joy):
     if filename=="":
