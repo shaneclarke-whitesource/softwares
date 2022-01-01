@@ -49,6 +49,7 @@ nb_of_demo=0
 nb_of_tools=0
 
 def buildDbFileSoftwareSingle(destetc,letter,name_software,filenametap8bytesLength,version_bin,rombasic11,fire2_joy,fire3_joy,down_joy,right_joy,left_joy,fire1_joy,up_joy):
+    print("Writting db file : "+destetc+"/"+letter+"/"+filenametap8bytesLength+".db")
     f = open(destetc+"/"+letter+"/"+filenametap8bytesLength+".db", "wb")
     f.write(DecimalToBinary(version_bin))
     f.write(DecimalToBinary(rombasic11))
