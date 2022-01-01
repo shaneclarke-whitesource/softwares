@@ -174,9 +174,26 @@ def BuildTape(tmpfolderRetrieveSoftware,tail,dest,letter,filenametap8bytesLength
     print("Copy : "+tmpfolderRetrieveSoftware+tail+" to : "+dest+"/"+letter+"/"+filenametap8bytesLength+"."+filenametapext)
     print("Rom basic id : "+str(rombasic11))
     copyfile(tmpfolderRetrieveSoftware+tail,dest+"/"+letter+"/"+filenametap8bytesLength+"."+filenametapext)
-    if rombasic11=="0":
+
+#$trom["0"]="undefined";
+#$trom["4"]="Rom Hobbit";
+#$trom["1"]="Rom jeux atmos";
+#$trom["2"]="Rom atmos normale";
+#$trom["3"]="Rom Oric-1";
+##$trom["99"]="NOK: no working ROM";
+#$trom["253"]="NOK : Does not load";
+#$trom["254"]="NOK : game ROM error: file not found";
+#$trom["255"]="NOK : Game ROM altered charset";
+
+
+    # Rom hobbit 
+    if rombasic11=="4":
+        print("Copy : "+tmpfolderRetrieveSoftware+tail+" to : "+destroot+"/"+filenametap8bytesLength+"."+filenametapext )
         copyfile(tmpfolderRetrieveSoftware+tail,destroot+"/"+filenametap8bytesLength+"."+filenametapext )
-       
+    
+    if rombasic11!="0" and rombasic11!="1" and rombasic11!="2":    
+        rombasic11=1
+
     if not os.path.exists(destetc+"/"+letter):
         os.mkdir(destetc+"/"+letter)
     buildMdFile(filenametap8bytesLength,dest,letter,name_software,date_software,download_platform_software,programmer_software,junk_software)
