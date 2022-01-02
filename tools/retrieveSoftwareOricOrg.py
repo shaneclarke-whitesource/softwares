@@ -171,7 +171,7 @@ def BuildDsk(platform_software,letter,destpath,destetc,name_software,filenametap
 
 def BuildTape(tmpfolderRetrieveSoftware,tail,dest,letter,filenametap8bytesLength,filenametapext,destroot,destetc,name_software,date_software,download_platform_software,programmer_software,junk_software,version_bin,rombasic11,fire2_joy,fire3_joy,down_joy,right_joy,left_joy,fire1_joy,up_joy):
     #Hobbit ROM we copy also the tape file at the root of the sdcard
-    print("Copy : "+tmpfolderRetrieveSoftware+tail+" to : "+dest+"/"+letter+"/"+filenametap8bytesLength+"."+filenametapext)
+    print("Copying tape : "+tmpfolderRetrieveSoftware+tail+" to : "+dest+"/"+letter+"/"+filenametap8bytesLength+"."+filenametapext)
     print("Rom basic id : "+str(rombasic11))
     copyfile(tmpfolderRetrieveSoftware+tail,dest+"/"+letter+"/"+filenametap8bytesLength+"."+filenametapext)
 
@@ -190,12 +190,15 @@ def BuildTape(tmpfolderRetrieveSoftware,tail,dest,letter,filenametap8bytesLength
     if rombasic11=="4":
         print("Copy : "+tmpfolderRetrieveSoftware+tail+" to : "+destroot+"/"+filenametap8bytesLength+"."+filenametapext )
         copyfile(tmpfolderRetrieveSoftware+tail,destroot+"/"+filenametap8bytesLength+"."+filenametapext )
-    
+        # Force to ROM 0 : hobbit ROM
+        rombasic11=0
+    # In oric.org we have roms id to declare if a game is working or not, and if it's 
     if rombasic11!="0" and rombasic11!="1" and rombasic11!="2":    
         rombasic11=1
 
     if not os.path.exists(destetc+"/"+letter):
         os.mkdir(destetc+"/"+letter)
+    print("Writing in db file rom id : ",str(rombasic11))
     buildMdFile(filenametap8bytesLength,dest,letter,name_software,date_software,download_platform_software,programmer_software,junk_software)
     buildDbFileSoftwareSingle(destetc,letter,name_software,filenametap8bytesLength,version_bin,rombasic11,fire2_joy,fire3_joy,down_joy,right_joy,left_joy,fire1_joy,up_joy)
 
@@ -203,11 +206,14 @@ def CheckTape(filename,tmpfolderRetrieveSoftware,tail,dest,letter,filenametap8by
     if filename=="":
         return 1
 
-    extension=filename[-3:].lower()
+
     if extension=="tap":
+        print("Found tape file : "+removeFrenchChars(name_software))
+        
+
         BuildTape(tmpfolderRetrieveSoftware,tail,dest,letter,filenametap8bytesLength,filenametapext,destroot,destetc,name_software,date_software,download_platform_software,programmer_software,junk_software,version_bin,rombasic11,fire2_joy,fire3_joy,down_joy,right_joy,left_joy,fire1_joy,up_joy)
         # main db
-        print("Found tape file : "+removeFrenchChars(name_software))
+        
         return 0
     return 1
 
@@ -468,11 +474,13 @@ for i in range(len(datastore)):
         CreateTargetFolder(dest,destetc,letter)
        
 
-        filenametap=tail.lower().replace(" ", "").replace("-", "").replace("_", "")
+        
             
-        tcnf=filenametap.split('.')
+        
         print("###########################################################################################")
         print("Generating : "+name_software+"/"+id_software)
+        filenametap=tail.lower().replace(" ", "").replace("-", "").replace("_", "")
+        tcnf=filenametap.split('.')
         filenametapext=tcnf[1]
         cnf=tcnf[0]+".db"
         filenametapbase=tcnf[0]
@@ -492,6 +500,7 @@ for i in range(len(datastore)):
         # Download 1
 
         if CheckTape(download_1_file,tmpfolderRetrieveSoftware,tail,dest,letter,filenametap8bytesLength,filenametapext,destroot,destetc,name_software,date_software,download_platform_software,programmer_software,junk_software,version_bin,rombasic11,fire2_joy,fire3_joy,down_joy,right_joy,left_joy,fire1_joy,up_joy)==0:
+            
             print("# tape")
             addSoftware=filenametap8bytesLength.upper()+';'+removeFrenchChars(name_software)+'\0'
             basic_main_db_str=basic_main_db_str+addSoftware
@@ -542,8 +551,20 @@ for i in range(len(datastore)):
                 print("Skipping first download trying second download : "+removeFrenchChars(name_software))
                 skipping_list_error=skipping_list_error+"Skipping first download : "+removeFrenchChars(name_software)+"/Flags : "+download_1_platform+" "+id_software+"\n"
 
+
+        if download_2_file!="":
+            extension=download_2_file[-3:].lower()
+            head, tail = os.path.split(download_2_file)
+            letter=tail[0:1].lower()
+            filenametap=tail.lower().replace(" ", "").replace("-", "").replace("_", "")
+            tcnf=filenametap.split('.')           
+            filenametapext=tcnf[1]
+            RetriveSoftwareInTmpFolder(download_2_file,tmpfolderRetrieveSoftware)
+            
+            
         if flag=="" and CheckTape(download_2_file,tmpfolderRetrieveSoftware,tail,dest,letter,filenametap8bytesLength,filenametapext,destroot,destetc,name_software,date_software,download_platform_software,programmer_software,junk_software,version_bin,rombasic11,fire2_joy,fire3_joy,down_joy,right_joy,left_joy,fire1_joy,up_joy)==0:
             print("# tape")
+
             addSoftware=filenametap8bytesLength.upper()+';'+removeFrenchChars(name_software)+'\0'
             basic_main_db_str=basic_main_db_str+addSoftware
             lenAddSoftware+=len(addSoftware)
