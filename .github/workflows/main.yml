@@ -100,31 +100,28 @@ jobs:
           echo "::set-output name=VERSION::$(cat VERSION)"
           echo "::set-output name=REPO_NAME::${GITHUB_REPOSITORY##*/}"
 
-      - name: Install sdk
-        uses: actions/cache@v2
-        with:
-          path: |
-             cc65/**/*
-             orix-sdk/**/*
-             md2hlp/**/*
-             orix-software/**/*
-          key: ${{ runner.os }}-orix-sdk_
+     # - name: Install sdk
+     #   uses: actions/cache@v2
+     #   with:
+     #     path: |
+     #        cc65/**/*
+     #        orix-sdk/**/*
+     #        md2hlp/**/*
+     #        orix-software/**/*
+     #     key: ${{ runner.os }}-orix-sdk_
 
-      - name: Prepare environment for project
-        run: mv cc65 ../ && mv orix-software ../ && mv orix-sdk ../ && mv md2hlp ../
+      #- name: Prepare environment for project
+      #  run: mv cc65 ../ && mv orix-software ../ && mv orix-sdk ../ && mv md2hlp ../
 
       - name: Compile project
         run:  |
           sudo apt-get install curl -y
           sudo apt-get install libcurl4-gnutls-dev -y
           sudo apt-get install python3-pycurl -y
-          #python -m pip install --upgrade pip
-          #pip3 install pycurl==7.43.0.1 --global-option="--with-nss" --upgrade
-          #if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          CC65_HOME=${GITHUB_WORKSPACE}/../cc65 make
+          make
 
       - name: List build directory content
-        run: ls -lR build
+        run: ls -lR build && pwd && ls -l ../
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
@@ -134,8 +131,8 @@ jobs:
             build/**/*
             !build/obj/*
 
-      - name: Post compilation
-        run: mv ../cc65 . && mv ../orix-software . && mv ../orix-sdk . && mv ../md2hlp .
+      #- name: Post compilation
+      #  run: mv ../cc65 . && mv ../orix-software . && mv ../orix-sdk . && mv ../md2hlp .
 
   upload:
     needs: build
@@ -177,5 +174,6 @@ jobs:
       - name: Upload to oric
         run: |
            if [ "$BRANCH_NAME" = "master" -o "$BRANCH_NAME" = "main" ]; then VERSION="$version"; else VERSION=alpha ; fi
+           echo "upload to https://cdn.oric.org/publish.php?hash=$hash&path=/home/oricoujr/www/ftp/orix/dists/$VERSION/tgz/6502/${ARCHIVE_NAME}"
            curl -X POST --data-binary "@${ARCHIVE_NAME}" "https://cdn.oric.org/publish.php?hash=$hash&path=/home/oricoujr/www/ftp/orix/dists/$VERSION/tgz/6502/${ARCHIVE_NAME}"
 
