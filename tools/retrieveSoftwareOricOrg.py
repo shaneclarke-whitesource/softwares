@@ -559,7 +559,10 @@ for i in range(len(datastore)):
             filenametap=tail.lower().replace(" ", "").replace("-", "").replace("_", "")
             tcnf=filenametap.split('.')           
             filenametapext=tcnf[1]
+            filenametapbase=tcnf[0]
+            filenametap8bytesLength=filenametapbase[0:8]
             RetriveSoftwareInTmpFolder(download_2_file,tmpfolderRetrieveSoftware)
+
             
             
         if flag=="" and CheckTape(download_2_file,tmpfolderRetrieveSoftware,tail,dest,letter,filenametap8bytesLength,filenametapext,destroot,destetc,name_software,date_software,download_platform_software,programmer_software,junk_software,version_bin,rombasic11,fire2_joy,fire3_joy,down_joy,right_joy,left_joy,fire1_joy,up_joy)==0:
