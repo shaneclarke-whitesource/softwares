@@ -173,6 +173,7 @@ def BuildTape(tmpfolderRetrieveSoftware,tail,dest,letter,filenametap8bytesLength
     #Hobbit ROM we copy also the tape file at the root of the sdcard
     print("Copying tape : "+tmpfolderRetrieveSoftware+tail+" to : "+dest+"/"+letter+"/"+filenametap8bytesLength+"."+filenametapext)
     print("Rom basic id : "+str(rombasic11))
+    CreateTargetFolder(dest,destetc,letter)
     copyfile(tmpfolderRetrieveSoftware+tail,dest+"/"+letter+"/"+filenametap8bytesLength+"."+filenametapext)
 
 #$trom["0"]="undefined";
